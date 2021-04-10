@@ -49,6 +49,34 @@ func TestSortInt64(t *testing.T) {
 	}
 }
 
+func TestSortFloat32(t *testing.T) {
+	rand.Seed(72)
+	x := make([]float32, 100000)
+	for i := range x {
+		x[i] = rand.Float32()
+	}
+	SortFloat32(x)
+	if !sort.SliceIsSorted(x, func(i, j int) bool {
+		return x[i] < x[j]
+	}) {
+		t.Error("x is not sorted")
+	}
+}
+
+func TestSortFloat64(t *testing.T) {
+	rand.Seed(72)
+	x := make([]float64, 100000)
+	for i := range x {
+		x[i] = rand.NormFloat64()
+	}
+	SortFloat64(x)
+	if !sort.SliceIsSorted(x, func(i, j int) bool {
+		return x[i] < x[j]
+	}) {
+		t.Error("x is not sorted")
+	}
+}
+
 func BenchmarkSortInt32(b *testing.B) {
 	sizes := []int{
 		1000,
@@ -114,6 +142,39 @@ func BenchmarkSortInt64(b *testing.B) {
 				copy(y, x)
 				b.StartTimer()
 				SortInt64(y)
+			}
+		})
+	}
+}
+
+func BenchmarkSortFloat64(b *testing.B) {
+	sizes := []int{
+		1000,
+		10000,
+		100000,
+		1000000,
+	}
+	for _, size := range sizes {
+		rand.Seed(72)
+		x := make([]float64, size)
+		for i := range x {
+			x[i] = rand.NormFloat64()
+		}
+		y := make([]float64, size)
+		b.Run("std/"+strconv.Itoa(size), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				b.StopTimer()
+				copy(y, x)
+				b.StartTimer()
+				sort.Float64s(y)
+			}
+		})
+		b.Run("radix/"+strconv.Itoa(size), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				b.StopTimer()
+				copy(y, x)
+				b.StartTimer()
+				SortFloat64(y)
 			}
 		})
 	}
