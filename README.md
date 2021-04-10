@@ -1,4 +1,5 @@
 # radix
+[![Test](https://github.com/orisano/radix/actions/workflows/go.yml/badge.svg)](https://github.com/orisano/radix/actions/workflows/go.yml)
 ## Benchmarks
 ```
 goos: darwin
