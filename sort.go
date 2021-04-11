@@ -41,7 +41,7 @@ func SortInt32(a []int32) {
 	b := make([]int32, len(a))
 	for _, v := range a {
 		x := encodeInt32(v)
-		level0[(x&0xff)+1]++
+		level0[((x>>0)&0xff)+1]++
 		level1[((x>>8)&0xff)+1]++
 		level2[((x>>16)&0xff)+1]++
 		level3[((x>>24)&0xff)+1]++
@@ -79,7 +79,7 @@ func SortUint32(a []uint32) {
 	b := make([]uint32, len(a))
 	for _, v := range a {
 		x := v
-		level0[(x&0xff)+1]++
+		level0[((x>>0)&0xff)+1]++
 		level1[((x>>8)&0xff)+1]++
 		level2[((x>>16)&0xff)+1]++
 		level3[((x>>24)&0xff)+1]++
@@ -251,7 +251,7 @@ func SortFloat32(a []float32) {
 	b := make([]float32, len(a))
 	for _, v := range a {
 		x := encodeFloat32(v)
-		level0[(x&0xff)+1]++
+		level0[((x>>0)&0xff)+1]++
 		level1[((x>>8)&0xff)+1]++
 		level2[((x>>16)&0xff)+1]++
 		level3[((x>>24)&0xff)+1]++
