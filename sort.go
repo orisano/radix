@@ -16,6 +16,8 @@ package radix
 
 import (
 	"math"
+	"runtime"
+	"sync"
 )
 
 func encodeInt32(x int32) uint32 {
@@ -348,5 +350,133 @@ func SortFloat64(a []float64) {
 		x := (encodeFloat64(v) >> 56) & 0xff
 		a[level7[x]] = v
 		level7[x]++
+	}
+}
+
+type parallelSorter struct {
+	begin, end int
+	histo      [256]int
+}
+
+func (ps *parallelSorter) computeHistogram(b uint8, src []int32) {
+	for i := range ps.histo {
+		ps.histo[i] = 0
+	}
+	chunk := src[ps.begin:ps.end]
+	for i := range chunk {
+		s := encodeInt32(chunk[i])
+		t := uint8((s >> b) & 0xff)
+		ps.histo[t]++
+	}
+}
+
+type smallSlice struct {
+	array [32]int32
+	n     int
+}
+
+func (s *smallSlice) Copy(dst []int32) {
+	copy(dst[:s.n], s.array[:s.n])
+}
+
+func (ps *parallelSorter) scatter(b uint8, src, dst []int32) {
+	var bufs [256]smallSlice
+	chunk := src[ps.begin:ps.end]
+	for i := range chunk {
+		s := encodeInt32(chunk[i])
+		t := uint8((s >> b) & 0xff)
+
+		n := bufs[t].n
+		bufs[t].array[n] = chunk[i]
+		bufs[t].n = n + 1
+		if bufs[t].n == 32 {
+			p := ps.histo[t]
+			dst := dst[p : p+32 : p+32]
+			dst[0] = bufs[t].array[0]
+			dst[1] = bufs[t].array[1]
+			dst[2] = bufs[t].array[2]
+			dst[3] = bufs[t].array[3]
+			dst[4] = bufs[t].array[4]
+			dst[5] = bufs[t].array[5]
+			dst[6] = bufs[t].array[6]
+			dst[7] = bufs[t].array[7]
+			dst[8] = bufs[t].array[8]
+			dst[9] = bufs[t].array[9]
+			dst[10] = bufs[t].array[10]
+			dst[11] = bufs[t].array[11]
+			dst[12] = bufs[t].array[12]
+			dst[13] = bufs[t].array[13]
+			dst[14] = bufs[t].array[14]
+			dst[15] = bufs[t].array[15]
+			dst[16] = bufs[t].array[16]
+			dst[17] = bufs[t].array[17]
+			dst[18] = bufs[t].array[18]
+			dst[19] = bufs[t].array[19]
+			dst[20] = bufs[t].array[20]
+			dst[21] = bufs[t].array[21]
+			dst[22] = bufs[t].array[22]
+			dst[23] = bufs[t].array[23]
+			dst[24] = bufs[t].array[24]
+			dst[25] = bufs[t].array[25]
+			dst[26] = bufs[t].array[26]
+			dst[27] = bufs[t].array[27]
+			dst[28] = bufs[t].array[28]
+			dst[29] = bufs[t].array[29]
+			dst[30] = bufs[t].array[30]
+			dst[31] = bufs[t].array[31]
+			ps.histo[t] += 32
+			bufs[t].n = 0
+		}
+	}
+	for i := 0; i < 256; i++ {
+		i := uint8(i)
+		p := ps.histo[i]
+		copy(dst[p:], bufs[i].array[:bufs[i].n])
+	}
+}
+
+func ParallelSort(a []int32) {
+	p := runtime.GOMAXPROCS(0)
+	n := len(a)
+	ss := make([]parallelSorter, p)
+	for i := 0; i < p-1; i++ {
+		t := (n - ss[i].begin) / (p - i)
+		end := ss[i].begin + t
+		ss[i].end = end
+		ss[i+1].begin = end
+	}
+	ss[p-1].end = n
+
+	b := make([]int32, n)
+	for i := 0; i < 4; i++ {
+		shift := uint8(i * 8)
+		var histoWg sync.WaitGroup
+		for j := range ss {
+			histoWg.Add(1)
+			go func(j int) {
+				ss[j].computeHistogram(shift, a)
+				histoWg.Done()
+			}(j)
+		}
+		histoWg.Wait()
+		s := 0
+		for j := 0; j < 256; j++ {
+			j := uint8(j)
+			for k := range ss {
+				t := s + ss[k].histo[j]
+				ss[k].histo[j] = s
+				s = t
+			}
+		}
+		var scatterWg sync.WaitGroup
+		for j := range ss {
+			scatterWg.Add(1)
+			go func(j int) {
+				ss[j].scatter(shift, a, b)
+				scatterWg.Done()
+			}(j)
+		}
+		scatterWg.Wait()
+		a, b = b, a
 	}
 }

@@ -35,6 +35,20 @@ func TestSortInt32(t *testing.T) {
 	}
 }
 
+func TestParallelSort(t *testing.T) {
+	rand.Seed(72)
+	x := make([]int32, 100000)
+	for i := range x {
+		x[i] = int32(rand.Uint32())
+	}
+	ParallelSort(x)
+	if !sort.SliceIsSorted(x, func(i, j int) bool {
+		return x[i] < x[j]
+	}) {
+		t.Error("x is not sorted")
+	}
+}
+
 func TestSortInt64(t *testing.T) {
 	rand.Seed(72)
 	x := make([]int64, 100000)
@@ -83,6 +97,7 @@ func BenchmarkSortInt32(b *testing.B) {
 		10000,
 		100000,
 		1000000,
+		10000000,
 	}
 	for _, size := range sizes {
 		rand.Seed(72)
@@ -107,6 +122,14 @@ func BenchmarkSortInt32(b *testing.B) {
 				copy(y, x)
 				b.StartTimer()
 				SortInt32(y)
+			}
+		})
+		b.Run("parallel-radix/" + strconv.Itoa(size), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				b.StopTimer()
+				copy(y, x)
+				b.StartTimer()
+				ParallelSort(y)
 			}
 		})
 	}
