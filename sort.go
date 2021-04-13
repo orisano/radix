@@ -16,7 +16,6 @@ package radix
 
 import (
 	"math"
-	"runtime"
 	"sync"
 )
 
@@ -353,12 +352,12 @@ func SortFloat64(a []float64) {
 	}
 }
 
-type parallelSorter struct {
+type parallelSorterInt32 struct {
 	begin, end int
 	histo      [256]int
 }
 
-func (ps *parallelSorter) computeHistogram(b uint8, src []int32) {
+func (ps *parallelSorterInt32) computeHistogram(b uint8, src []int32) {
 	for i := range ps.histo {
 		ps.histo[i] = 0
 	}
@@ -370,17 +369,17 @@ func (ps *parallelSorter) computeHistogram(b uint8, src []int32) {
 	}
 }
 
-type smallSlice struct {
+type smallSliceInt32 struct {
 	array [32]int32
 	n     int
 }
 
-func (s *smallSlice) Copy(dst []int32) {
+func (s *smallSliceInt32) Copy(dst []int32) {
 	copy(dst[:s.n], s.array[:s.n])
 }
 
-func (ps *parallelSorter) scatter(b uint8, src, dst []int32) {
-	var bufs [256]smallSlice
+func (ps *parallelSorterInt32) scatter(b uint8, src, dst []int32) {
+	var bufs [256]smallSliceInt32
 	chunk := src[ps.begin:ps.end]
 	for i := range chunk {
 		s := encodeInt32(chunk[i])
@@ -435,10 +434,9 @@ func (ps *parallelSorter) scatter(b uint8, src, dst []int32) {
 	}
 }
 
-func ParallelSort(a []int32) {
-	p := runtime.GOMAXPROCS(0)
+func ParallelSortInt32(a []int32, p int) {
 	n := len(a)
-	ss := make([]parallelSorter, p)
+	ss := make([]parallelSorterInt32, p)
 	for i := 0; i < p-1; i++ {
 		t := (n - ss[i].begin) / (p - i)
 		end := ss[i].begin + t

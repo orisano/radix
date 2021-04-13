@@ -16,6 +16,7 @@ package radix
 
 import (
 	"math/rand"
+	"runtime"
 	"sort"
 	"strconv"
 	"testing"
@@ -41,7 +42,7 @@ func TestParallelSort(t *testing.T) {
 	for i := range x {
 		x[i] = int32(rand.Uint32())
 	}
-	ParallelSort(x)
+	ParallelSortInt32(x, runtime.GOMAXPROCS(0))
 	if !sort.SliceIsSorted(x, func(i, j int) bool {
 		return x[i] < x[j]
 	}) {
@@ -124,12 +125,12 @@ func BenchmarkSortInt32(b *testing.B) {
 				SortInt32(y)
 			}
 		})
-		b.Run("parallel-radix/" + strconv.Itoa(size), func(b *testing.B) {
+		b.Run("parallel-radix/"+strconv.Itoa(size), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				b.StopTimer()
 				copy(y, x)
 				b.StartTimer()
-				ParallelSort(y)
+				ParallelSortInt32(y, runtime.GOMAXPROCS(0))
 			}
 		})
 	}
