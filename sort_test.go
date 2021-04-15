@@ -107,14 +107,12 @@ func BenchmarkSortInt32(b *testing.B) {
 			x[i] = int32(rand.Uint32())
 		}
 		y := make([]int32, size)
-		b.Run("std/"+strconv.Itoa(size), func(b *testing.B) {
+		b.Run("parallel-radix/"+strconv.Itoa(size), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				b.StopTimer()
 				copy(y, x)
 				b.StartTimer()
-				sort.Slice(y, func(i, j int) bool {
-					return y[i] < y[j]
-				})
+				ParallelSortInt32(y, runtime.GOMAXPROCS(0))
 			}
 		})
 		b.Run("radix/"+strconv.Itoa(size), func(b *testing.B) {
@@ -125,12 +123,14 @@ func BenchmarkSortInt32(b *testing.B) {
 				SortInt32(y)
 			}
 		})
-		b.Run("parallel-radix/"+strconv.Itoa(size), func(b *testing.B) {
+		b.Run("std/"+strconv.Itoa(size), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				b.StopTimer()
 				copy(y, x)
 				b.StartTimer()
-				ParallelSortInt32(y, runtime.GOMAXPROCS(0))
+				sort.Slice(y, func(i, j int) bool {
+					return y[i] < y[j]
+				})
 			}
 		})
 	}
@@ -150,6 +150,14 @@ func BenchmarkSortInt64(b *testing.B) {
 			x[i] = int64(rand.Uint64())
 		}
 		y := make([]int64, size)
+		b.Run("radix/"+strconv.Itoa(size), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				b.StopTimer()
+				copy(y, x)
+				b.StartTimer()
+				SortInt64(y)
+			}
+		})
 		b.Run("std/"+strconv.Itoa(size), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				b.StopTimer()
@@ -158,14 +166,6 @@ func BenchmarkSortInt64(b *testing.B) {
 				sort.Slice(y, func(i, j int) bool {
 					return y[i] < y[j]
 				})
-			}
-		})
-		b.Run("radix/"+strconv.Itoa(size), func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
-				b.StopTimer()
-				copy(y, x)
-				b.StartTimer()
-				SortInt64(y)
 			}
 		})
 	}
@@ -185,20 +185,20 @@ func BenchmarkSortFloat64(b *testing.B) {
 			x[i] = rand.NormFloat64()
 		}
 		y := make([]float64, size)
-		b.Run("std/"+strconv.Itoa(size), func(b *testing.B) {
-			for i := 0; i < b.N; i++ {
-				b.StopTimer()
-				copy(y, x)
-				b.StartTimer()
-				sort.Float64s(y)
-			}
-		})
 		b.Run("radix/"+strconv.Itoa(size), func(b *testing.B) {
 			for i := 0; i < b.N; i++ {
 				b.StopTimer()
 				copy(y, x)
 				b.StartTimer()
 				SortFloat64(y)
+			}
+		})
+		b.Run("std/"+strconv.Itoa(size), func(b *testing.B) {
+			for i := 0; i < b.N; i++ {
+				b.StopTimer()
+				copy(y, x)
+				b.StartTimer()
+				sort.Float64s(y)
 			}
 		})
 	}
