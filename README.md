@@ -6,39 +6,39 @@ goos: darwin
 goarch: amd64
 pkg: github.com/orisano/radix
 cpu: Intel(R) Core(TM) i7-1068NG7 CPU @ 2.30GHz
-BenchmarkSortInt32/parallel-radix/1000-8         	    9241	    133422 ns/op
-BenchmarkSortInt32/radix/1000-8                  	  135092	      8080 ns/op
-BenchmarkSortInt32/std/1000-8                    	   24223	     50666 ns/op
-BenchmarkSortInt32/parallel-radix/10000-8        	    5595	    196793 ns/op
-BenchmarkSortInt32/radix/10000-8                 	   17590	     68618 ns/op
-BenchmarkSortInt32/std/10000-8                   	    1071	   1096447 ns/op
-BenchmarkSortInt32/parallel-radix/100000-8       	    1982	    568277 ns/op
-BenchmarkSortInt32/radix/100000-8                	    1705	    689857 ns/op
-BenchmarkSortInt32/std/100000-8                  	      84	  13942514 ns/op
-BenchmarkSortInt32/parallel-radix/1000000-8      	     296	   3896824 ns/op
-BenchmarkSortInt32/radix/1000000-8               	     156	   7603199 ns/op
-BenchmarkSortInt32/std/1000000-8                 	       6	 170011070 ns/op
-BenchmarkSortInt32/parallel-radix/10000000-8     	      31	  32860509 ns/op
-BenchmarkSortInt32/radix/10000000-8              	      15	  72790575 ns/op
-BenchmarkSortInt32/std/10000000-8                	       1	1967581046 ns/op
-BenchmarkSortInt64/radix/1000-8                  	   76771	     15643 ns/op
-BenchmarkSortInt64/std/1000-8                    	   24112	     50633 ns/op
-BenchmarkSortInt64/radix/10000-8                 	    7333	    151333 ns/op
-BenchmarkSortInt64/std/10000-8                   	    1076	   1113783 ns/op
-BenchmarkSortInt64/radix/100000-8                	     729	   1639533 ns/op
-BenchmarkSortInt64/std/100000-8                  	      81	  13797465 ns/op
-BenchmarkSortInt64/radix/1000000-8               	      61	  19137255 ns/op
-BenchmarkSortInt64/std/1000000-8                 	       6	 169879131 ns/op
-BenchmarkSortFloat64/radix/1000-8                	   56588	     21197 ns/op
-BenchmarkSortFloat64/std/1000-8                  	   14817	     81180 ns/op
-BenchmarkSortFloat64/radix/10000-8               	    5872	    192180 ns/op
-BenchmarkSortFloat64/std/10000-8                 	     934	   1303996 ns/op
-BenchmarkSortFloat64/radix/100000-8              	     524	   2199037 ns/op
-BenchmarkSortFloat64/std/100000-8                	      70	  16114116 ns/op
-BenchmarkSortFloat64/radix/1000000-8             	      49	  24124947 ns/op
-BenchmarkSortFloat64/std/1000000-8               	       6	 196980290 ns/op
+BenchmarkSortInt32/parallel-radix/1000-8         	   9175	   126633 ns/op
+BenchmarkSortInt32/radix/1000-8                  	 146168	     7416 ns/op
+BenchmarkSortInt32/std/1000-8                    	  24579	    49791 ns/op
+BenchmarkSortInt32/parallel-radix/10000-8        	   5852	   196073 ns/op
+BenchmarkSortInt32/radix/10000-8                 	  19602	    61577 ns/op
+BenchmarkSortInt32/std/10000-8                   	   1104	  1092107 ns/op
+BenchmarkSortInt32/parallel-radix/100000-8       	   2031	   564766 ns/op
+BenchmarkSortInt32/radix/100000-8                	   1848	   642259 ns/op
+BenchmarkSortInt32/std/100000-8                  	     85	 13660845 ns/op
+BenchmarkSortInt32/parallel-radix/1000000-8      	    294	  3998838 ns/op
+BenchmarkSortInt32/radix/1000000-8               	    177	  6596822 ns/op
+BenchmarkSortInt32/std/1000000-8                 	      6	167633926 ns/op
+BenchmarkSortInt32/parallel-radix/10000000-8     	     33	 33278574 ns/op
+BenchmarkSortInt32/radix/10000000-8              	     18	 65536943 ns/op
+BenchmarkSortInt32/std/10000000-8                	      1	2016386593 ns/op
+BenchmarkSortInt64/radix/1000-8                  	  81774	    14584 ns/op
+BenchmarkSortInt64/std/1000-8                    	  24586	    49592 ns/op
+BenchmarkSortInt64/radix/10000-8                 	   8539	   136973 ns/op
+BenchmarkSortInt64/std/10000-8                   	   1090	  1103024 ns/op
+BenchmarkSortInt64/radix/100000-8                	    798	  1493399 ns/op
+BenchmarkSortInt64/std/100000-8                  	     84	 13716647 ns/op
+BenchmarkSortInt64/radix/1000000-8               	     74	 16567415 ns/op
+BenchmarkSortInt64/std/1000000-8                 	      6	168054870 ns/op
+BenchmarkSortFloat64/radix/1000-8                	  59556	    20545 ns/op
+BenchmarkSortFloat64/std/1000-8                  	  14757	    81297 ns/op
+BenchmarkSortFloat64/radix/10000-8               	   6640	   173604 ns/op
+BenchmarkSortFloat64/std/10000-8                 	    933	  1284367 ns/op
+BenchmarkSortFloat64/radix/100000-8              	    556	  2119231 ns/op
+BenchmarkSortFloat64/std/100000-8                	     74	 16072978 ns/op
+BenchmarkSortFloat64/radix/1000000-8             	     54	 20893954 ns/op
+BenchmarkSortFloat64/std/1000000-8               	      6	195648988 ns/op
 PASS
-ok  	github.com/orisano/radix	66.290s
+ok  	github.com/orisano/radix	67.594s
 ```
 
 ## References
