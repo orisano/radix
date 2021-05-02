@@ -36,7 +36,7 @@ func TestSortInt32(t *testing.T) {
 	}
 }
 
-func TestParallelSort(t *testing.T) {
+func TestParallelSortInt32(t *testing.T) {
 	rand.Seed(72)
 	x := make([]int32, 100000)
 	for i := range x {
